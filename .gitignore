@@ -1,0 +1,5 @@
+# ignore
+venv/
+*.pyc
+static/upload/
+.idea/
