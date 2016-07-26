@@ -1,5 +1,5 @@
 # ignore
 venv/
 *.pyc
-static/upload/
+static/upload/*
 .idea/
