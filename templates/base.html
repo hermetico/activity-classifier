@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Chrome, Firefox OS and Opera -->
+    <meta name="theme-color" content="#000000">
+    <!-- Windows Phone -->
+    <meta name="msapplication-navbutton-color" content="#000000">
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Daily activity Recognition - CNN & RDF based classifier</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="/static/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
+    <!-- Theme CSS -->
+    <link href="/static/css/grayscale.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                    Menu <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand page-scroll" href="/">
+                    <i class="fa fa-play-circle"></i> <span class="light">Activity</span> Recognition
+                </a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                <ul class="nav navbar-nav">
+                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#about">The classifier</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#classify">Try it out</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#examples">Examples</a>
+                    </li>
+                    {% if data %}
+                    <li>
+                        <a class="page-scroll" href="#prediction">Prediction</a>
+                    </li>
+                    {% endif %}
+                    {%  if previous_pics.keys() %}
+                    <li>
+                        <a class="page-scroll" href="#previous">Previous predictions</a>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <a class="page-scroll" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Intro Header -->
+    <header class="intro">
+        <div class="img-mask"></div>
+        <div class="intro-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2 font-shadow">
+                        <h1 class="brand-heading">Daily activities Classifier</h1>
+                        <p class="intro-text">Daily activities classifier of <b>egocentric images</b>
+                            <br>based on Convolutional Neural Networks && Random Decision Forests</p>
+                        <a href="#about" class="btn btn-circle page-scroll">
+                            <i class="fa fa-angle-double-down animated"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+
+
+    <!-- About Section -->
+    <section id="about" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h2>About the Classifier</h2>
+                <p>Automatic classification algorithms, such as convolutional neural networks based techniques and deep learning have shown promising results when classifying images.</p>
+                <p>The system we are using to classify images is based on a <em>fine-tuned</em> convolutional neural network, previously trained with ImageNet, and a Random Decision Forest classifier. The CNN is used to extract
+                the image features and those features are eventually classified using the RDF</p>
+                <p>This web allows you to predict activities, within a list of 21 predefined labels, from your own egocentric images using the CNN & RDF classifier, and also just the CNN classifier.</p>
+                <p>The labels are: Public transport, driving, walking outdoor, walking indoor, biking, having drinks with somebody, having drinks/meal alone, having meal with somebody,
+                    socializing, attending a seminar, meeting, reading, tv, cleaning and chores, working, cooking, shopping, talking, resting, mobile, Plane</p>
+                <p>The best results are obtained through the CNN + RDF. This web will also show you the predictions based only on the CNN</p>
+            </div>
+        </div>
+    </section>
+
+        <!-- classify section Section -->
+    <section id="classify" class="content-section text-center">
+        <div class="download-section" style="background: url(/static/upload/streets.jpg) no-repeat center center scroll; position:relative;">
+            <div class="container">
+
+                <div class="img-mask"></div>
+                <div class="col-lg-12 opaque-background">
+                    <h2>Classify your own image</h2>
+                    <form method="POST" action="/upload" enctype="multipart/form-data">
+                            <input type="file" name="file" id="file" class="inputfile">
+                            <label for="file" class="btn btn-default"><span>Choose a file</span></label>
+
+                        <button type="submit" class="btn btn-default" >Classify!</button>
+                    </form>
+                    {% with messages = get_flashed_messages() %}
+                      {% if messages %}
+                        {% for message in messages %}
+                          <p><i class="fa fa-exclamation-triangle"></i>{{ message }}</p>
+                        {% endfor %}
+                      {% endif %}
+                    {% endwith %}
+                    <br>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+        <!-- About Section -->
+    <section id="examples" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2>Some examples</h2>
+                <div class="row">
+                    {%  for example in examples %}
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <div class="col-lg-12">
+                        <img class="img-responsive" src="/static/upload/thumb/{{ example }}" class="img-rounded">
+                        </div>
+
+                        <br>
+                        <p><a class="btn btn-default" href="/classify/{{ example }}#prediction">Try it!</a></p>
+                        <br>
+                    </div>
+                    {% endfor %}
+            </div>
+        </div>
+    </section>
+
+
+    {% block content %}{% endblock %}
+    {%  if previous_pics.keys() %}
+     <section id="previous" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2>Previous predictions</h2>
+
+                    <table class="table">
+                    <thead>
+                        <tr><td>file</td><td>prediction</td><td></td></tr>
+                    </thead>
+                    {%  for path, label in previous_pics.iteritems() %}
+                        <tr><td>{{ path }}</td><td>{{ label }}</td><td><a class="btn btn-default" href="/classify/{{ path }}#prediction">Check!</a></td></tr>
+                    {%  endfor %}
+                    </table>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+    <!-- Contact Section -->
+    <section id="contact" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h2>That's all</h2>
+                <p>Feel free to check the github of the project. You can even follow me on Twitter!</p>
+
+                <ul class="list-inline banner-social-buttons">
+                    <li>
+                        <a href="https://github.com/hermetico/TFG" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+                    </li>
+                    <li>
+                        <a href="https://twitter.com/marinmenyo" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p>&copy; Hermético,  2016</p>
+        </div>
+    </footer>
+    <script>
+        var input = document.querySelectorAll( '.inputfile' )[0];
+        var label	 = input.nextElementSibling,
+            labelVal = label.innerHTML;
+
+        input.addEventListener( 'change', function( e )
+        {
+            if( this.files && this.files.length > 0 )
+                label.querySelector( 'span' ).innerHTML = "1 image selected";
+            else
+                label.querySelector( 'span' ).innerHTML = "Choose a file";
+        });
+
+    </script>
+    <!-- jQuery -->
+    <script src="/static/vendor/jquery/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+
+
+    <!-- Theme JavaScript -->
+    <script src="/static/js/grayscale.min.js"></script>
+
+</body>
+
+</html>
