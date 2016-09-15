@@ -59,15 +59,19 @@ def main(path=None):
         path = path.replace(os.path.pathsep, '')  # security reasons
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], path)
         print "classifying " + path
-        label = classifier_lib.classify(filepath)
+        top5_rdf_labels, top5_rdf_percent = classifier_lib.classify(filepath)
         top5_labels, top5_percent = classifier_lib.classify(filepath, way='cnn')
+        top5_rdf = zip(top5_rdf_labels, top5_rdf_percent)
         top5 = zip(top5_labels, top5_percent)
+        label = top5_rdf_labels[0]
         if path not in examples:  # if not, it is a test picture
             session['previous-pics'][path] = label
-        return render_template('index.html', data=dict(label=label, top5=top5, classifier_background=path), examples=examples, previous_pics=session['previous-pics'])
+        return render_template('index.html', data=dict(label=label,
+            top5_rdf=top5_rdf, top5=top5, classifier_background=path),
+            examples=examples, previous_pics=session['previous-pics'])
 
-    return render_template('base.html', examples=examples, previous_pics=session['previous-pics'])
-
+    return render_template('base.html', examples=examples,
+        previous_pics=session['previous-pics'])
 @app.route('/upload', methods=['POST'])
 def upload():
     if not 'previous-pics' in session:

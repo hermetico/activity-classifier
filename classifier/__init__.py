@@ -101,9 +101,12 @@ class Classifier(object):
     def classify_tree(self, image_path):
 
         features = self.features(image_path)
-        prediction = self.forest.predict([features])[0]
-        predicted_label = labels[prediction]
-        return predicted_label
+        predictions = self.forest.predict_proba([features])[0]
+        top_5_probs = np.sort(predictions)[-1:6:-1]
+        top_5_indexes = predictions.argsort()[-1:-6:-1]
+        top_5_labels = np_labels[top_5_indexes]
+        top_5_probs *= 100
+        return (top_5_labels, top_5_probs)
 
     def classify_net(self, image_path):
         top_predictions = self.probs(image_path)

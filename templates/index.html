@@ -16,22 +16,24 @@
                             <img class="img-responsive" src="/static/upload/thumb/{{ data.classifier_background }}" class="img-rounded">
                         </div>
                         <div class="col-lg-6 col-md-12">
-                            <p>The next table shows the <b>Top 1 for the CNN && RDF</b> solution and the <b>Top 5</b> predictions <b>only</b> for the CNN:
+                            <p>The next table shows the <b>Top 5 for the CNN && RDF</b> predictions and the <b>Top 5</b> predictions <b>only</b> for the CNN:
                             <table class="table">
                                 <thead>
-                                    <tr><td>Top 1 CNN && RDF</td><td>% confidence</td><td>Label</td></tr>
+                                    <tr><td>Top 5 CNN && RDF</td><td>% confidence</td><td>Label</td></tr>
                                 </thead>
                                 <tbody>
+                                {% for label, prediction in data.top5_rdf %}
                                     <tr>
-                                    <td>1</td>
-                                    <td>100%</td>
-                                    <td>{{ data.label }}</td>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ prediction}}%</td>
+                                    <td>{{ label }}</td>
                                     </tr>
+                                {% endfor %}
                                     <tr><td class="thead">Top 5 CNN probs</td><td></td><td></td></tr>
                                 {% for label, prediction in data.top5 %}
                                     <tr>
                                     <td>{{ loop.index }}</td>
-                                    <td>{{  prediction }}%</td>
+                                    <td>{{ prediction }}%</td>
                                     <td>{{ label }}</td>
                                     </tr>
                                 {%  endfor %}
